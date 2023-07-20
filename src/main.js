@@ -9,7 +9,6 @@ window.onload = async () => {
   // And it also injects the helper function to `window.keplr`.
   // If `window.getOfflineSigner` or `window.keplr` is null, Keplr extension may be not installed on browser.
 
-
   // if (!window.getOfflineSigner || !window.keplr) {
   //   alert("Please install keplr extension");
   // } else {
@@ -145,10 +144,18 @@ document.sendForm.onsubmit = () => {
 
   (async () => {
     // See above.
+    window.keplr.defaultOptions = {
+      sign: {
+        preferNoSetMemo: true,
+        preferNoSetFee: true,
+        disableBalanceCheck: true,
+      },
+    };
     const chainId = "euphoria-2";
     await window.keplr.enable(chainId);
-    // const offlineSigner = window.getOfflineSignerOnlyAmino(chainId);
-    const offlineSigner = window.getOfflineSigner(chainId);
+
+    const offlineSigner = window.getOfflineSignerOnlyAmino(chainId);
+    // const offlineSigner = window.getOfflineSigner(chainId);
     const accounts = await offlineSigner.getAccounts();
 
     const client = await SigningStargateClient.connectWithSigner(
@@ -177,7 +184,7 @@ document.sendForm.onsubmit = () => {
       fee,
       ""
     );
-    console.log(result)
+    console.log(result);
     assertIsBroadcastTxSuccess(result);
 
     if (result.code !== undefined && result.code !== 0) {
